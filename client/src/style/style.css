@@ -1,0 +1,54 @@
+*{
+    text-decoration: none;
+}
+
+.status{
+    width: 110;
+    height: 20;
+    background-color: #a4eeff;
+    color: #ffffff;
+    
+}
+
+.card{
+    background: #F6DADA;
+    border: none;
+    border-radius: 25px;
+    color: #BD0707;
+    ;
+}
+
+.formInput {
+    display: block;
+    width: 100%;
+    color: grey;
+    border: 2px solid #BD0707;
+}
+.formInput:focus {
+    border-color: #BD0707;
+    outline: 0;
+    box-shadow: 0 0 0 0.15rem #BD0707;
+  }
+
+  .input-image {
+    border: 2px solid #BD0707;
+    width: 100%;
+    color: grey;
+    border-radius: 5px;
+    padding: 6px;
+  }
+
+.inputImage {
+    cursor: pointer;
+}
+
+.receipt {
+    border: 2px solid #BD0707;
+    border-radius: 10px;
+    background-color: whitesmoke;
+    color: grey;
+}
+
+.addCard {
+    text-decoration: none;
+}
