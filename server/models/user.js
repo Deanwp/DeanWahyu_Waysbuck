@@ -23,6 +23,12 @@ module.exports = (sequelize, DataTypes) => {
           name: "idUser",
         },
       });
+      user.hasMany(models.favorite, {
+        as: "userFavorite",
+        foreignKey: {
+          name: "idUser",
+        },
+      });
     }
   }
   user.init({

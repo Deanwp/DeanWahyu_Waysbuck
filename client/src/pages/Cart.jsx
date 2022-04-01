@@ -7,21 +7,56 @@ import { API } from "../config/api";
 
 function Cart() {
     const [orders, setOrders] = useState([]);
+    const [orderId, setOrderId] = useState([])
+
     let navigate = useNavigate();
     const getOrders = async () => {
         try {
           const response = await API.get("/orders");
-          // Store transaction data to useState variabel
+          // Store order data to useState variabel
           setOrders(response.data.data);
         } catch (error) {
           console.log(error);
         }
       };
       
-      console.log(orders);
       
       useEffect(() => {
         getOrders();
+      }, []);
+
+      const handleChangeOrderId = (e) => {
+        const id = e.target.value;
+        const checked = e.target.checked;
+  
+        if (checked) {
+          // Save topping id if checked
+          setOrderId([...orderId, parseInt(id)]);
+        } else {
+          // Delete category id from variable if unchecked
+          let newOrderId = orderId.filter((orderIdItem) => {
+            return orderIdItem != id;
+          });
+          setOrderId(newOrderId);
+        }
+      };
+
+      useEffect(() => {
+        //change this to the script source you want to load, for example this is snap.js sandbox env
+        const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
+        //change this according to your client-key
+        const myMidtransClientKey = "SB-Mid-client-4j-2K1PGXPS8iHdF";
+      
+        let scriptTag = document.createElement("script");
+        scriptTag.src = midtransScriptUrl;
+        // optional if you want to set script attribute
+        // for example snap.js have data-client-key attribute
+        scriptTag.setAttribute("data-client-key", myMidtransClientKey);
+      
+        document.body.appendChild(scriptTag);
+        return () => {
+          document.body.removeChild(scriptTag);
+        };
       }, []);
 
       const handleBuy = async (e) => {
@@ -37,16 +72,41 @@ function Cart() {
     
           // Get data from product
           const data = {
-            idOrder: orders.id,
+            idOrder: orderId,
           };
           
           // Data body
           const body = JSON.stringify(data);
           console.log(data);
           // Insert Order data
-          await API.post("/transaction", body, config);
+          const response = await API.post("/transaction", body, config);
+          console.log(response);
+          const token = response.data.payment.token;
+
+          console.log(token);
+          
+          window.snap.pay(token, {
+            onSuccess: function (result) {
+              /* You may add your own implementation here */
+              console.log(result);
+              navigate("/profile");
+            },
+            onPending: function (result) {
+              /* You may add your own implementation here */
+              console.log(result);
+              navigate("/profile");
+            },
+            onError: function (result) {
+              /* You may add your own implementation here */
+              console.log(result);
+            },
+            onClose: function () {
+              /* You may add your own implementation here */
+              alert("you closed the popup without finishing the payment");
+            },
+          });
     
-          navigate("/profile")
+          
         } catch (error) {
           console.log(error);
         }
@@ -63,16 +123,17 @@ function Cart() {
                         <div className="d-grid">
                             {orders.map((item, index, array) => (
                             <div key={index} className="row card-body p-0 mb-3">
-                                    <div className="col-2 p-0 mb-2 mt-5">
-                                        <img src={item.beverage.image} alt="" height='120px'/>
+                                    <div className="col-3 p-0 mb-2 mt-5 d-flex align-items-center gap-3">
+                                        <input type="checkbox" value={item.id} onClick={handleChangeOrderId}/> 
+                                        <img className="ml-3" src={item.beverage.image} alt="" height='120px'/>
                                     </div>
-                                    <div className="d-flex p-0 col-10 mb-2 mt-5 ">
+                                    <div className="d-flex p-0 col-9 mb-2 mt-5 ">
                                         <div className="col-8">
                                             <h4 className="mb-1 fw-bold">{item.beverage.title}</h4>
-                                            <p className="mb-1"> <span className="fw-bold">Toping :</span>  {item.topping} </p>
+                                            <p className="mb-1 d-flex text-start"> <span className="fw-bold">Toping :</span> {item.toppings.map(topping =>  <p className="mx-start m-0">{topping.title},</p>)} </p>
                                         </div>
                                         <div className="col-4 mx-0 text-end " >
-                                            <p className="mb-1 mx-0">{item.beverage.price}</p>
+                                            <p className="mb-1 mx-0">33.000</p>
                                             <img src="/images/Delete.png" alt="" />
                                         </div>
                                     </div>
@@ -99,10 +160,10 @@ function Cart() {
                             </div>
                             <div className="col-4 mx-0 text-end p-0 " >
                                 <Divider></Divider>
-                                <p className="mb-2 mx-0">Price : Rp.36.000</p>
-                                <p className="mb-2">2</p>
+                                <p className="mb-2 mx-0">Price : Rp.33.000</p>
+                                <p className="mb-2">1</p>
                                 <Divider></Divider>
-                                <p className="mb-2 fw-bold"> 69.000 </p>
+                                <p className="mb-2 fw-bold"> Rp.33.000 </p>
                             </div>
                         <Divider></Divider>
                         </div>
@@ -117,10 +178,6 @@ function Cart() {
                         <Form.Group className="mb-3" controlId="form">
                             <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="text" placeholder="Name"  />
                         </Form.Group>
-                        <Form.Group className="mb-3" controlId="form">
-                            <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="email" placeholder="Email"  />
-                        </Form.Group>
-
                         <Form.Group className="mb-3" controlId="form">
                             <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="number" placeholder="Phone" />
                         </Form.Group>

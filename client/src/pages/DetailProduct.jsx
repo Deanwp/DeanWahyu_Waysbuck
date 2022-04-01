@@ -13,6 +13,8 @@ function DetailProduct() {
     const [beverage, setBeverage] = useState({});
     const [topping, setTopping] = useState([])
     const [toppingId, setToppingId] = useState([])
+    console.log(toppingId);
+    const [toppingPrice, setToppingPrice] = useState([])
   
     console.log(beverage);
 
@@ -34,7 +36,9 @@ function DetailProduct() {
           console.log(error);
         }
       };
-      
+    
+
+    
       
         // For handle if category selected
     const handleChangeOrderId = (e) => {
@@ -99,10 +103,13 @@ function DetailProduct() {
                     {topping.length !== 0 ? (
                     <div className="row text-center mt-5">
                     {topping?.map((item, index) => (
-                        <div className="col-3">
+                        <div className="col-3 d-grid text-center justify-content-center" >
+                            <div className="d-flex justify-content-end" id="checkboxes">
+                                <input style={{float:"left"}} id={item.id} type="checkbox" value={item.id} onClick={handleChangeOrderId}/>
+                                <label class="iconTopping" for={item.id}></label>
+                            </div>
                             <img src={item.image} className="m-3" alt="" width= '90px' height= '90px;'  />
                             <p>{item.title}</p>
-                            <input type="checkbox" value={item.id} onClick={handleChangeOrderId}/> 
                         </div>))}
                     </div>
                     ) : (

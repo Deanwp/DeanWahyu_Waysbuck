@@ -52,3 +52,21 @@
 .addCard {
     text-decoration: none;
 }
+
+.iconTopping{
+    position: absolute;
+    display: inline-block;
+    width: 110px;
+    height: 100px;
+}
+
+#checkboxes input[type=checkbox]{
+    display: none;
+}
+
+#checkboxes input[type=checkbox]:checked + .iconTopping{
+    background-image: url("./Images/IconApprove.png");
+    width: 25px;
+    height: 25px;
+    background-repeat: no-repeat;
+}

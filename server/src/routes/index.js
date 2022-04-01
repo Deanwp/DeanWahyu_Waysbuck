@@ -6,14 +6,16 @@ const router = express.Router()
 const { getUsers, getUser, updateUser, deleteUser } = require('../controllers/user')
 const { getBeverages, addBeverage, getBeverage, updateBeverage, deleteBeverage } = require('../controllers/beverage')
 const { getToppings, addTopping, getTopping, updateTopping, deleteTopping } = require('../controllers/topping')
-const { getTransactions, addTransaction } = require('../controllers/transaction')
+const { getTransactions, addTransaction, notification } = require('../controllers/transaction')
 const { register, login, checkAuth } = require('../controllers/auth')
 const { addOrder, getOrder, deleteOrder } = require('../controllers/order') 
-const { getProfile } = require("../controllers/profile");
+const { getProfile } = require("../controllers/profile")
+const {getFavorite, addFavorite, deleteFavorite} = require("../controllers/favorite")
 
 // Middleware
 const { auth } = require('../middlewares/auth')
 const {uploadFile} = require('../middlewares/uploadFile')
+
 
 // Route
 router.post('/register', register)
@@ -36,14 +38,20 @@ router.get('/topping/:id', getTopping)
 router.patch('/topping/:id', auth, uploadFile("image"), updateTopping)
 router.delete('/topping/:id', auth, deleteTopping)
 
-router.get('/orders', getOrder)
+router.get('/orders',auth, getOrder)
 router.post('/order', auth, addOrder)
 router.delete('/order/:id', auth, deleteOrder)
+
+router.get('/favorites', getFavorite)
+router.post('/favorite', auth, addFavorite)
+router.delete('/favorite/:id',auth, deleteFavorite)
 
 router.get('/transactions', getTransactions)
 router.post('/transaction', auth, addTransaction)
 
 router.get("/profile", auth, getProfile);
+
+router.post("/notification", notification);
 
 
 module.exports = router

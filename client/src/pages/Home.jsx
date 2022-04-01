@@ -22,6 +22,7 @@ function Home() {
         getBeverage();
         }, []);
     
+
     return(
         <Container>
             <div>
@@ -37,7 +38,7 @@ function Home() {
             <h1 className="text-danger fw-bold mb-4">Lets Order</h1>    
                 {beverage.length !== 0 ? (
                    <Row>
-                       {beverage?.map((item, index) => (<ProductCard item={item} key={index} />))}
+                       {beverage?.map((item, index) => (<ProductCard item={item} key={index}/>))}
                    </Row>
                    ) : (
                     <Col>

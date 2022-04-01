@@ -9,6 +9,8 @@ function Profile() {
     const [profile, setProfile] = useState({});
     const [transactions, setTransactions] = useState([]);
 
+    console.log(transactions);
+
     const getProfile = async () => {
         try {
           const response = await API.get("/profile");
@@ -40,7 +42,7 @@ function Profile() {
                 <div className="row col-md-6 col-sm-12 align-items-start p-0 ">
                 <h1 className="text-danger fw-bold mb-4">My Profile</h1>
                    <div className="col-md-4 col-sm-12">
-                    <img src={profile?.image ? profile.image : imgBlank} style={{ width: "90%" }} alt="" />
+                    <img src="/Images/Profilepict.png" style={{ width: "90%" }} alt="" />
                    </div>
                    <div className="col-md-8 col-sm-12 sm-text-center p-0">
                     <h4>Full Name</h4>
@@ -51,31 +53,30 @@ function Profile() {
                 </div>
                 <div className="row col-md-6 col-sm-12">
                 <h1 className="text-brown fw-bold mb-4">My Transaction</h1>
+                {transactions.length !== 0 ? (
                     <div className="card mb-3">
+                      {transactions?.map((item, index) => (
                         <div className="row m-1 p-3">
-                        <div className="d-grid col-md-4 order-2 justify-content-center mx-auto text-center">
-                            <img className="mx-auto" src="/images/Logo.png" width="100px" height="100px" alt="" />
-                            <img className="mx-auto m-4" src="/images/Barcode.png" width="100px" height="100px" alt="" />
-                            <div className="status btn p-0 align-item-center">Waiting Confirmation</div>
-                            <div className="total pt-2">Sub Total: </div>
-                        </div>
-                        {transactions.length !== 0 ? (
-                        <div className="col-md-8 order-1">
-                            {transactions?.map((item, index) => (
-                            <div className="row card-body p-0 mb-3">
-                                <div className="col-4 p-0">
-                                    <img src="/images/productpict.png" alt="" height='120px'/>
-                                </div>
-                                <div className="p-0 col-8">
-                                    <h4 className="mb-1 fw-bold">{item.orders.idBeverage}</h4>
-                                    <p className="mb-1"><span className="fw-bold">Saturday</span>, 5 March 2020</p>
-                                    <p className="mb-1"> <span className="fw-bold">Toping :</span>  : Bill Berry Boba, Bubble Tea Gelatin </p>
-                                    <p className="mb-1">Price : Rp.33.000</p>
-                                </div>
-                            </div>))}
-                        </div>) : (<div className="no-data-transaction">No transaction</div>)}
-                        </div>
-                    </div>
+                          <div className="d-grid col-md-4 order-2 justify-content-center mx-auto text-center">
+                              <img className="mx-auto" src="/images/Logo.png" width="100px" height="100px" alt="" />
+                              <img className="mx-auto m-4" src="/images/Barcode.png" width="100px" height="100px" alt="" />
+                              <div className="status btn p-0 align-item-center">Success</div>
+                              <div className="total pt-2">Sub Total: 33.000</div>
+                          </div>
+                          <div className="col-md-8 order-1">
+                              <div className="row card-body p-0 mb-3">
+                                  <div className="col-4 p-0">
+                                      <img src={item.orders.beverage.image} alt="" height='120px'/>
+                                  </div>
+                                  <div className="p-0 col-8">
+                                      <h4 className="mb-1 fw-bold">{item.orders.beverage.title}</h4>
+                                      <p className="mb-1"><span className="fw-bold">Saturday</span>, 23 March 2022</p>
+                                      <p className="mb-1 d-flex text-start"> <span className="fw-bold">Toping :</span>  {item.orders.toppings.map(topping =>  <p className="mx-start m-0">{topping.title},</p>)} </p>
+                                  </div>
+                              </div>
+                          </div>
+                        </div>))}
+                    </div>) : (<div className="no-data-transaction">No transaction</div>)}
                 </div>
             </div>
         </Container>

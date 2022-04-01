@@ -45,6 +45,7 @@ export default function HeaderSignin () {
                         <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/iprofile.png" width="20" height="20" alt="adminPage" /></i><Link to="/adminpage" className="text-decoration-none text-dark"> Admin Page</Link></MenuItem>
                         <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/ibeverage.png" width="20" height="20" alt="addBeverage" /></i><Link to="/addproduct" className="text-decoration-none text-dark"> Add Beverage</Link></MenuItem>
                         <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/itopping.png" width="20" height="20" alt="addTopping" /></i><Link to="/addtopping" className="text-decoration-none text-dark"> Add Topping</Link></MenuItem>
+                        
                         <MenuItem divider />
                         <MenuItem onClick={logout} className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/ilogout.png" width="20" height="20" alt="logout"/></i> Logout</MenuItem>
                     </Menu>
@@ -66,6 +67,7 @@ export default function HeaderSignin () {
                     </Tooltip>
                     <Menu anchorEl={anchorEl} id="account-menu" open={open} onClose={handleClose} onClick={handleClose}>
                         <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/iprofile.png" width="20" height="20" alt="logout" /></i><Link to="/profile" className="text-decoration-none text-dark"> Profile</Link></MenuItem>
+                        <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/heart-regular.svg" width="20" height="20" alt="addTopping" /></i><Link to="/favorite" className="text-decoration-none text-dark"> Favorite</Link></MenuItem>
                         <MenuItem divider />
                         <MenuItem onClick={logout} className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/ilogout.png" width="20" height="20" alt="logout"/></i> Logout</MenuItem>
                     </Menu>

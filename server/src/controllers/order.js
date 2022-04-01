@@ -23,6 +23,13 @@ exports.getOrder = async (req, res) => {
               exclude: ["createdAt", "updatedAt"],
             },
           },
+          {
+            model: user,
+            as: "user",
+            attributes: {
+              exclude: ["createdAt", "updatedAt", "password", "role"],
+            },
+          },
         ],
         attributes: {
           exclude: ["createdAt", "updatedAt",],
@@ -57,14 +64,13 @@ exports.getOrder = async (req, res) => {
   exports.addOrder = async (req, res) => {
     try {
     let { toppingId } = req.body;
-    
-      let data = req.body;
+    let data = req.body;
   
-      data = {
-        ...data,
-      };
+    data = {
+      ...data,
+    };
     
-      let newOrder =  await order.create(data);
+    let newOrder =  await order.create(data);
     
     const beverageToppingData = toppingId.map((item) => {
       return { idOrder: newOrder.id, idTopping: parseInt(item) };
@@ -97,7 +103,7 @@ exports.getOrder = async (req, res) => {
   
       res.send({
         status: "success",
-        message: `Delete Beverage id: ${id} finished`,
+        message: `Delete Order id: ${id} finished`,
       });
     } catch (error) {
       console.log(error);

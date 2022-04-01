@@ -1,17 +1,29 @@
-import React from "react";
-import { Table, Container } from "react-bootstrap"
-import { useState } from "react";
+import React, { useContext, useState, useEffect } from "react"
+import { Container, Table, Col } from "react-bootstrap";
+import { UserContext } from "../context/userContext";
+import { API } from "../config/api";
 
 function AdminPage() {
-    const [state, setState] = useState({
-        isConfirm: 0,
-    })
-
+    const [transactions, setTransactions] = useState([]);
+    // Fetching transaction data from database
+    const getTransactions = async () => {
+        try {
+          const response = await API.get("/transactions");
+          // Store transaction data to useState variabel
+          setTransactions(response.data.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      useEffect(() => {
+        getTransactions();
+      }, []);
 
     return(
         <>
             <Container>
             <h1>Income Transaction</h1>
+            {transactions.length !== 0 ? (
             <Table className="text-center justify-content center">
             <thead>
                 <tr>
@@ -24,50 +36,25 @@ function AdminPage() {
                 <th>Action</th>
                 </tr>
             </thead>
+            
             <tbody>
+                {transactions?.map((item, index) => (
                 <tr>
                 <td>1</td>
-                <td>Sugeng</td>
-                <td>Cileungsi</td>
-                <td>16820</td>
-                <td>69.000</td>
-                <td>Waiting Approve</td>
-                <td>
-                    <div className="d-flex justify-content-center gap-2">
-                        <button type="button" class="btn btn-success">Approve</button>
-                        <button type="button" class="btn btn-danger">Cancel</button>
-                    </div>
-                </td>
-                </tr>
-                <tr>
-                <td>2</td>
-                <td>Haris</td>
-                <td>Serang</td>
-                <td>42111</td>
-                <td>30.000</td>
-                <td>Success</td>
+                <td>{item.user.name}</td>
+                <td>Nganjuk</td>
+                <td>123456</td>
+                <td>33.000</td>
+                <td>{item.status}</td>
                 <td><i><img src="/images/IconApprove.png" alt="" /></i></td>
-                </tr>
-                <tr>
-                <td>3</td>
-                <td>Aziz</td>
-                <td>Bekasi</td>
-                <td>13450</td>
-                <td>28.000</td>
-                <td>Cancel</td>
-                <td><i><img src="/images/IconCancel.png" alt="" /></i></td>
-                </tr>
-                <tr>
-                <td>4</td>
-                <td>Lae</td>
-                <td>Tanjung Balai</td>
-                <td>21331</td>
-                <td>30.000</td>
-                <td>On The Way</td>
-                <td><i><img src="/images/IconApprove.png" alt="" /></i></td>
-                </tr>
+                </tr>))}
             </tbody>
-            </Table>
+            </Table>) : 
+            (<Col>
+                <div className="text-center pt-5">
+                  <img className="img-fluid" style={{ width: "40%" }} alt="empty"  src="/images/nodata-founds.png"/>
+                </div>
+            </Col>)}
             </Container>
         </>
     )

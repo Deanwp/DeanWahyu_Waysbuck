@@ -1,6 +1,5 @@
 import {React, useContext} from "react"
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import {Navbar, Container, Nav, Button, Modal, Form, Alert} from 'react-bootstrap'
 import { UserContext } from "../../context/userContext";
 import { API } from "../../config/api";
