@@ -11,11 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      order.hasMany(models.transaction,{
+      order.belongsToMany(models.transaction, {
         as: "transactions",
-        foreignKey: {
-          name: "idOrder",
+        through: {
+          model: "orderTransaction",
+          as: "bridge",
         },
+        foreignKey: "idOrder",
       });
       order.belongsTo(models.beverage, {
         as: "beverage",
@@ -31,11 +33,20 @@ module.exports = (sequelize, DataTypes) => {
         },
         foreignKey: "idOrder",
       });
+      order.belongsTo(models.user, {
+        as: "user",
+        foreignKey: {
+          name: "idUser",
+        },
+      });
     }
   }
   order.init({
     idBeverage: DataTypes.INTEGER,
+    idUser: DataTypes.INTEGER,
+    price: DataTypes.STRING,
     qty: DataTypes.STRING,
+    status: DataTypes.STRING,
     
   }, {
     sequelize,

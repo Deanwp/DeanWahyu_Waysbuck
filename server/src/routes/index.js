@@ -15,6 +15,7 @@ const {getFavorite, addFavorite, deleteFavorite} = require("../controllers/favor
 // Middleware
 const { auth } = require('../middlewares/auth')
 const {uploadFile} = require('../middlewares/uploadFile')
+const { getShipping, addShipping, deleteShipping } = require('../controllers/shipping')
 
 
 // Route
@@ -38,15 +39,19 @@ router.get('/topping/:id', getTopping)
 router.patch('/topping/:id', auth, uploadFile("image"), updateTopping)
 router.delete('/topping/:id', auth, deleteTopping)
 
-router.get('/orders',auth, getOrder)
+router.get('/orders/:id',auth, getOrder)
 router.post('/order', auth, addOrder)
 router.delete('/order/:id', auth, deleteOrder)
 
-router.get('/favorites', getFavorite)
-router.post('/favorite', auth, addFavorite)
-router.delete('/favorite/:id',auth, deleteFavorite)
+router.get('/favorites/:id', getFavorite)
+router.post('/favorite', auth, addShipping)
+router.delete('/favorite/:id',auth, deleteShipping)
 
-router.get('/transactions', getTransactions)
+router.get('/shipping/:id', getShipping)
+router.post('/shipping', auth, addFavorite)
+router.delete('/shipping/:id',auth, deleteFavorite)
+
+router.get('/transactions/:id', getTransactions)
 router.post('/transaction', auth, addTransaction)
 
 router.get("/profile", auth, getProfile);

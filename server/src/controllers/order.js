@@ -1,8 +1,13 @@
-const { order, beverage, topping, beverageTopping } = require("../../models");
+const { user, order, beverage, topping, beverageTopping } = require("../../models");
 
 exports.getOrder = async (req, res) => {
     try {
+      const { id } = req.params;
       let data = await order.findAll({
+          where: {
+            idUser: id,
+            status: null
+          },
         include: [
           {
             model: beverage,
@@ -65,9 +70,11 @@ exports.getOrder = async (req, res) => {
     try {
     let { toppingId } = req.body;
     let data = req.body;
+    
   
     data = {
       ...data,
+      idUser: req.user.id
     };
     
     let newOrder =  await order.create(data);
@@ -93,7 +100,7 @@ exports.getOrder = async (req, res) => {
 
   exports.deleteOrder = async (req, res) => {
     try {
-      const { id } = req.body;
+      const { id } = req.params;
   
       await order.destroy({
         where: {

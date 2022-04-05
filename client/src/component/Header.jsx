@@ -60,10 +60,7 @@ function Header() {
                 email: "",
                 password: "",
                 });
-                dispatch({
-                    type: "USER_SUCCESS",
-                    payload: response.data.data,
-                  });
+                setStateModal({ login : true,register : false})
             } else {
                 const alert = (
                 <Alert variant="danger" className="py-1">
@@ -148,7 +145,7 @@ function Header() {
                             <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="text" placeholder="Fullname" value={name} name="name" onChange={handleChange}/>
                         </Form.Group>
                         <div className="d-grid text-center">
-                        <Button variant="danger" width="100%" type="submit" onClick={onCloseModalRegister}>
+                        <Button variant="danger" width="100%" type="submit">
                             Register
                         </Button>
                         <Form.Text>Already have an account ? Click <a onClick={onAlreadyAccount} className="fw-bold text-dark" style={{textDecoration:"none", cursor:"pointer"}}>Here</a></Form.Text>
@@ -157,7 +154,7 @@ function Header() {
                     </Form>
                 </Modal.Body>
             </Modal>
-            <ModalLogin size="sm" show={stateModal.login} handleClose={onCloseModalLogin} onHaveAccount={onHaveAccount}/>)
+            <ModalLogin size="sm" show={stateModal.login} handleClose={onCloseModalLogin} onHaveAccount={onHaveAccount} setModal={setStateModal}/>
         </>
     )
 }

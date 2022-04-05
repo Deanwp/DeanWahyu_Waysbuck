@@ -14,11 +14,11 @@ const RoutesComponenet = () => {
                 <Route exact path="/" element={<Home />} />
                 <Route exact path="/addproduct" element={<AddProduct />} />
                 <Route exact path="/beverage/:id" element={<DetailProduct />} />
-                <Route exact path="/cart" element={<Cart />} />
+                <Route exact path="/cart/:id" element={<Cart />} />
                 <Route exact path="/addtopping" element={<AddTopping />} />
-                <Route exact path="/profile" element={<Profile />} /> 
+                <Route exact path="/profile/:id" element={<Profile />} /> 
                 <Route exact path="/adminpage" element={<AdminPage />} />
-                <Route exact path="/favorite" element={<Favorite />} />
+                <Route exact path="/favorite/:id" element={<Favorite />} />
             </Routes>
         </>
     )

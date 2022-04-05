@@ -1,13 +1,22 @@
-const { user, transaction, beverage, order,topping, beverageTopping,profile} = require('../../models')
+const { user, transaction, beverage, order,topping, beverageTopping, profile, orderTransaction} = require('../../models')
 const midtransClient = require('midtrans-client');
 
 exports.getTransactions = async (req, res) => {
     try {
+      const { id } = req.params;
       let data = await transaction.findAll({
+        where: {
+          idUser: id,
+        },
         include: [
           {
             model: order,
             as: "orders",
+            through: {
+              model: orderTransaction,
+              as: "bridge",
+              attributes: [],
+            },
             include: [
               {
                 model: beverage,
@@ -42,22 +51,20 @@ exports.getTransactions = async (req, res) => {
           },
         ],
         attributes: {
-          exclude: ["createdAt", "updatedAt",],
+          exclude: ["updatedAt",],
         },
       });
   
       data = JSON.parse(JSON.stringify(data));
   
       data = data.map((item) => {
+        item.orders.map( orders =>
+          orders.beverage.image = process.env.FILE_PATH + orders.beverage.image)
         return { 
             ...item,
-            orders: {
+            orders: [
               ...item.orders,
-              beverage: {
-                ...item.orders.beverage,
-                image: process.env.FILE_PATH + item.orders.beverage.image,
-              },
-            },
+            ],
         };
       });
   
@@ -76,17 +83,33 @@ exports.getTransactions = async (req, res) => {
 
 exports.addTransaction = async (req, res) => {
   try {
+    let { orderId } = req.body;
     let data = req.body;
 
     data = {
-      id: parseInt(data.idBeverage + Math.random().toString().slice(3, 8)),
+      id: parseInt(data.orderId + Math.random().toString().slice(3, 8)),
       ...data,
       idUser: req.user.id,
-      status: "success",
-      price:"33000"
+      status: "pending",
+      
     };
 
     const newData = await transaction.create(data);
+
+    const orderTransactionData = orderId.map((item) => {
+      return { idTransaction: newData.id, idOrder: parseInt(item) };
+    });
+    await orderTransaction.bulkCreate(orderTransactionData);
+    await order.update(
+      {
+        status: "success"
+      },
+      {
+        where: {
+          id: orderId,
+        },
+      }
+    );
 
     const buyerData = await user.findOne({
       include: {
@@ -112,7 +135,7 @@ exports.addTransaction = async (req, res) => {
     let parameter = {
       transaction_details: {
         order_id: newData.id,
-        gross_amount: 33000,
+        gross_amount: newData.allPrice,
       },
       credit_card: {
         secure: true,
@@ -120,7 +143,7 @@ exports.addTransaction = async (req, res) => {
       customer_details: {
         full_name: buyerData?.name,
         email: buyerData?.email,
-        phone:1234567890
+        phone:buyerData?.phone
       },
     };
 
@@ -132,8 +155,8 @@ exports.addTransaction = async (req, res) => {
       status: "pending",
       message: "Pending transaction payment gateway",
       payment,
-      order: {
-        id: data.idOrder,
+      transaction: {
+        id: data.id,
       },
     });
   } catch (error) {
@@ -156,6 +179,7 @@ core.apiConfig.set({
   clientKey: MIDTRANS_CLIENT_KEY,
 });
 
+
 exports.notification = async (req, res) => {
   try {
     const statusResponse = await core.transaction.notification(req.body);
@@ -175,6 +199,7 @@ exports.notification = async (req, res) => {
         // TODO set transaction status on your database to 'success'
         // and response with 200 OK
         updateTransaction("success", orderId);
+        updateOrder("success")
         res.status(200);
       }
     } else if (transactionStatus == "settlement") {

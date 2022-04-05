@@ -1,18 +1,18 @@
-const {favorite, user, beverage,} = require("../../models");
+const {shipping, user, beverage,} = require("../../models");
 
-exports.getFavorite = async (req, res) => {
+exports.getShipping = async (req, res) => {
   try {
     const { id } = req.params;
-    let data = await favorite.findAll({
+    let shipping = await shipping.findAll({
       where: {
         idUser: id
       },
       include: [
         {
-          model: beverage,
-          as: "beverage",
+          model: user,
+          as: "user",
           attributes: {
-            exclude: ["createdAt", "updatedAt"],
+            exclude: ["createdAt", "updatedAt", "password", "role"],
           },
         },
       ],
@@ -21,21 +21,11 @@ exports.getFavorite = async (req, res) => {
       },
     });
 
-    data = JSON.parse(JSON.stringify(data));
-
-    data = data.map((item) => {
-      return { 
-          ...item,
-          beverage: {
-              ...item.beverage,
-              image: process.env.FILE_PATH + item.beverage.image,
-            },
-      };
-    });
-
     res.send({
-      status: "success...",
-      data,
+      status: "success",
+      data: {
+        shipping,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -46,7 +36,7 @@ exports.getFavorite = async (req, res) => {
   }
 };
 
-  exports.addFavorite = async (req, res) => {
+  exports.addShipping = async (req, res) => {
     try {
     let data = req.body;
   
@@ -55,11 +45,11 @@ exports.getFavorite = async (req, res) => {
       idUser: req.user.id,
     };
     
-    await favorite.create(data);
+    await shipping.create(data);
 
       res.send({
         status: "success",
-        message: "Add Favorite finished",
+        message: "Add finished",
       });
     } catch (error) {
       console.log(error);
@@ -70,11 +60,11 @@ exports.getFavorite = async (req, res) => {
     }
   };
 
-  exports.deleteFavorite = async (req, res) => {
+  exports.deleteShipping = async (req, res) => {
     try {
-      const { id } = req.body;
+      const { id } = req.params;;
   
-      await favorite.destroy({
+      await shipping.destroy({
         where: {
           id,
         },
@@ -82,7 +72,7 @@ exports.getFavorite = async (req, res) => {
   
       res.send({
         status: "success",
-        message: `Delete Favorite id: ${id} finished`,
+        message: `Delete Shipping id: ${id} finished`,
       });
     } catch (error) {
       console.log(error);

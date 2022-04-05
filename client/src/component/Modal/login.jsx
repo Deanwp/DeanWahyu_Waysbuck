@@ -6,7 +6,7 @@ import { API } from "../../config/api";
 import { useNavigate } from "react-router-dom";
 
 
-export default function ModalLogin({show, handleClose, onHaveAccount}) {
+export default function ModalLogin({show, setModal,handleClose, onHaveAccount}) {
     let navigate = useNavigate()
     const [state, dispatch] = useContext(UserContext)
     const [message, setMessage] = useState(null);
@@ -64,6 +64,7 @@ export default function ModalLogin({show, handleClose, onHaveAccount}) {
                 email : '',
                 password: ''
               });
+            setModal({ login :false})
           }
         } catch (error) {
           const alert = (
@@ -91,7 +92,7 @@ export default function ModalLogin({show, handleClose, onHaveAccount}) {
                         </Form.Group>
 
                         <div className="d-grid text-center">
-                        <Button variant="danger" width="100%" type="submit" onClick={handleClose}>
+                        <Button variant="danger" width="100%" type="submit">
                             Login
                         </Button>
                         <Form.Text>Don't have an account ? Click <a onClick={onHaveAccount} className="fw-bold text-dark" style={{textDecoration:"none", cursor:"pointer"}}>Here</a></Form.Text>

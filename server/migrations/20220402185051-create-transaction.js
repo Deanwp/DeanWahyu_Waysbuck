@@ -8,10 +8,10 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      idOrder: {
+      idShipping: {
         type: Sequelize.INTEGER,
         references: {
-          model: "orders",
+          model: "shippings",
           key: "id",
         },
         onUpdate: "CASCADE",
@@ -25,6 +25,9 @@ module.exports = {
         },
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
+      },
+      allPrice: {
+        type: Sequelize.STRING
       },
       status: {
         type: Sequelize.STRING
@@ -43,3 +46,4 @@ module.exports = {
     await queryInterface.dropTable('transactions');
   }
 };
+

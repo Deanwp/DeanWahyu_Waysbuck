@@ -53,7 +53,7 @@ export default function HeaderSignin () {
             </Nav>} else {
                 return <Nav className="navbar gap-3 justify-content-start align-item-center"> 
                 <Container className="gap-3">
-                <Link to="/cart"><i className=""><img src="/Images/Cart.png" width="35" height="33" alt="cart"/></i></Link>
+                <Link to={"/cart/" + state.user.id}><i className=""><img src="/Images/Cart.png" width="35" height="33" alt="cart"/></i></Link>
                     <Tooltip title="Account settings">
                         <IconButton
                             onClick={handleClick}
@@ -66,8 +66,8 @@ export default function HeaderSignin () {
                         </IconButton>
                     </Tooltip>
                     <Menu anchorEl={anchorEl} id="account-menu" open={open} onClose={handleClose} onClick={handleClose}>
-                        <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/iprofile.png" width="20" height="20" alt="logout" /></i><Link to="/profile" className="text-decoration-none text-dark"> Profile</Link></MenuItem>
-                        <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/heart-regular.svg" width="20" height="20" alt="addTopping" /></i><Link to="/favorite" className="text-decoration-none text-dark"> Favorite</Link></MenuItem>
+                        <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/iprofile.png" width="20" height="20" alt="logout" /></i><Link to={"/profile/" + state.user.id} className="text-decoration-none text-dark"> Profile</Link></MenuItem>
+                        <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/heart-regular.svg" width="20" height="20" alt="addTopping" /></i><Link to={"/favorite/" + state.user.id} className="text-decoration-none text-dark"> Favorite</Link></MenuItem>
                         <MenuItem divider />
                         <MenuItem onClick={logout} className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/ilogout.png" width="20" height="20" alt="logout"/></i> Logout</MenuItem>
                     </Menu>

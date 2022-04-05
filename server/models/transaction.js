@@ -11,10 +11,10 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      transaction.belongsTo(models.order, {
-        as: "orders",
+      transaction.belongsTo(models.shipping, {
+        as: "shippings",
         foreignKey: {
-          name: "idOrder",
+          name: "idShipping",
         },
       });
       transaction.belongsTo(models.user, {
@@ -23,12 +23,21 @@ module.exports = (sequelize, DataTypes) => {
           name: "idUser",
         },
       });
+      transaction.belongsToMany(models.order, {
+        as: "orders",
+        through: {
+          model: "orderTransaction",
+          as: "bridge",
+        },
+        foreignKey: "idTransaction",
+      });
     }
   }
   transaction.init({
     status: DataTypes.STRING,
     idUser: DataTypes.INTEGER,
-    idOrder:DataTypes.INTEGER
+    idShipping:DataTypes.INTEGER,
+    allPrice: DataTypes.STRING,
   }, {
     sequelize,
     modelName: 'transaction',

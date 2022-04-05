@@ -1,14 +1,19 @@
 import React from "react"
 import { Card, Container, Col, Row} from "react-bootstrap";
-import { useState, useEffect } from "react";
+import { useState, useEffect,useContext } from "react";
 import { API } from "../config/api";
 import BeverageCardFavorite from "../component/Card/BeverageCardFavorite";
+import { UserContext } from "../context/userContext";
+import { Link, useNavigate, useParams } from "react-router-dom";
+
 
 function Favorite() {
+    const [state] = useContext(UserContext);
     const [favorite, setFavorite] = useState([]);
+    let { id } = useParams()
     const getFavorite = async () => {
       try {
-        const res = await API.get("/favorites")
+        const res = await API.get("/favorites/" + id)
         setFavorite(res.data.data)
       } catch (error) {
         console.log(error);

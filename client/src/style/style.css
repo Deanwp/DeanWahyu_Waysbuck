@@ -3,10 +3,12 @@
 }
 
 .status{
-    width: 110;
-    height: 20;
-    background-color: #a4eeff;
+    height:min-content;
+    width: 100px;
+    text-align: center;
+    background-color: #BD0707;
     color: #ffffff;
+    border-radius: 25px;
     
 }
 
@@ -49,7 +51,7 @@
     color: grey;
 }
 
-.addCard {
+.addCart {
     text-decoration: none;
 }
 

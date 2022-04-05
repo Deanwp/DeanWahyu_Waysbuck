@@ -4,15 +4,25 @@ import { useState, useEffect } from "react";
 import { Card, Container, Button, Form, FloatingLabel, Col} from "react-bootstrap";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { API } from "../config/api";
+import convertRupiah from "rupiah-format";
+import DeleteData from "../component/Modal/DeleteData";
 
 function Cart() {
     const [orders, setOrders] = useState([]);
     const [orderId, setOrderId] = useState([])
-
+    const [idDelete, setIdDelete] = useState(null);
+    const [confirmDelete, setConfirmDelete] = useState(null);
+    const [totalPrice, setTotalPrice] = useState([])
+    const [show, setShow] = useState(false);
+    const handleClose = () => setShow(false);
+    const handleShow = () => setShow(true);
+    let { id } = useParams()
     let navigate = useNavigate();
+    
+
     const getOrders = async () => {
         try {
-          const response = await API.get("/orders");
+          const response = await API.get("/orders/"+ id);
           // Store order data to useState variabel
           setOrders(response.data.data);
         } catch (error) {
@@ -20,15 +30,48 @@ function Cart() {
         }
       };
       
-      
       useEffect(() => {
         getOrders();
       }, []);
 
+
+      const handleDelete = (index) => {
+        setIdDelete(index);
+        handleShow();
+      };
+      const deleteById = async (index) => {
+        try {
+          await API.delete(`/order/${index}`);
+          getOrders();
+        } catch (error) {
+          console.log(error);
+        }
+      };
+      useEffect(() => {
+        if (confirmDelete) {
+          handleClose();
+          deleteById(idDelete);
+          setConfirmDelete(null);
+        }
+      }, [confirmDelete]);
+
+
       const handleChangeOrderId = (e) => {
-        const id = e.target.value;
+        const id = e.target.id;
         const checked = e.target.checked;
-  
+        const price = e.target.value
+
+        if (checked) {
+          // Save topping id if checked
+          setTotalPrice([...totalPrice, parseInt(price)]);
+        } else {
+          // Delete category id from variable if unchecked
+          let newTotalPrice = totalPrice.filter((totalPriceItem) => {
+            return totalPriceItem != price;
+          });
+          setTotalPrice(newTotalPrice);
+        }
+
         if (checked) {
           // Save topping id if checked
           setOrderId([...orderId, parseInt(id)]);
@@ -40,6 +83,9 @@ function Cart() {
           setOrderId(newOrderId);
         }
       };
+
+      const allPrice = totalPrice.reduce((a, b) => a + b, 0)
+      console.log(allPrice);
 
       useEffect(() => {
         //change this to the script source you want to load, for example this is snap.js sandbox env
@@ -72,7 +118,8 @@ function Cart() {
     
           // Get data from product
           const data = {
-            idOrder: orderId,
+            orderId: orderId,
+            allPrice: allPrice
           };
           
           // Data body
@@ -80,10 +127,8 @@ function Cart() {
           console.log(data);
           // Insert Order data
           const response = await API.post("/transaction", body, config);
-          console.log(response);
+        
           const token = response.data.payment.token;
-
-          console.log(token);
           
           window.snap.pay(token, {
             onSuccess: function (result) {
@@ -113,6 +158,7 @@ function Cart() {
       };
     
     return(
+      <>
         <Container className="text-danger">
             <h1 className="fw-bold mb-5 ">My Cart</h1>
             <p>Review Your Order</p>
@@ -124,17 +170,24 @@ function Cart() {
                             {orders.map((item, index, array) => (
                             <div key={index} className="row card-body p-0 mb-3">
                                     <div className="col-3 p-0 mb-2 mt-5 d-flex align-items-center gap-3">
-                                        <input type="checkbox" value={item.id} onClick={handleChangeOrderId}/> 
+                                        <input type="checkbox" id={item.id} value={item.price * item.qty} onClick={handleChangeOrderId}/> 
                                         <img className="ml-3" src={item.beverage.image} alt="" height='120px'/>
                                     </div>
                                     <div className="d-flex p-0 col-9 mb-2 mt-5 ">
                                         <div className="col-8">
                                             <h4 className="mb-1 fw-bold">{item.beverage.title}</h4>
-                                            <p className="mb-1 d-flex text-start"> <span className="fw-bold">Toping :</span> {item.toppings.map(topping =>  <p className="mx-start m-0">{topping.title},</p>)} </p>
+                                            <div className="d-flex mb-1">
+                                              <p className="col-2,5 mb-1 d-flex text-start fw-bold">Toping :</p> 
+                                              <ul className="col-9 d-grid mx-start mb-0 text-start"> {item.toppings.map(topping =>  <li>{topping.title}</li>)}</ul>
+                                            </div>
+                                            <p className="mb-1 d-flex text-start">{convertRupiah.convert(item.price)} x {item.qty} </p>
+
                                         </div>
                                         <div className="col-4 mx-0 text-end " >
-                                            <p className="mb-1 mx-0">33.000</p>
-                                            <img src="/images/Delete.png" alt="" />
+                                            <p className="mb-1 mx-0"></p>
+                                            <div style={{cursor:'pointer'}} onClick={() => {handleDelete(item.id);}}>
+                                              <img src="/images/Delete.png" alt="" />
+                                            </div>
                                         </div>
                                     </div>
                             </div>))}
@@ -150,32 +203,22 @@ function Cart() {
                     <Divider></Divider>
 
                     <div className="row card-body p-0 mb-3 gap-5">
-                        <div className="d-flex col-6 p-0 mb-2 mt-5">
+                        <div className="d-flex col-12 p-0 mb-2 mt-5">
                             <div className="col-8 p-0">
-                                <Divider></Divider>
-                                <p className="mb-2 fw-bold">Subtotal</p>
-                                <p className="mb-2"> Qty </p>
                                 <Divider></Divider>
                                 <p className="mb-2 fw-bold"> Total </p>
                             </div>
                             <div className="col-4 mx-0 text-end p-0 " >
                                 <Divider></Divider>
-                                <p className="mb-2 mx-0">Price : Rp.33.000</p>
-                                <p className="mb-2">1</p>
-                                <Divider></Divider>
-                                <p className="mb-2 fw-bold"> Rp.33.000 </p>
+                                <p className="mb-2 fw-bold"> {convertRupiah.convert(allPrice)} </p>
                             </div>
                         <Divider></Divider>
-                        </div>
-                        <div className="receipt p-2 col-5 mb-2 mt-5 text-center border-danger mr-2">
-                                <img className="mb-3" src="/images/receip.png" alt="" />
-                                <p>Attache of Transaction</p>
                         </div>
                     </div>
                 </div>
                 <div className="col-4 text-danger">
                 <Form >
-                        <Form.Group className="mb-3" controlId="form">
+                        {/* <Form.Group className="mb-3" controlId="form">
                             <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="text" placeholder="Name"  />
                         </Form.Group>
                         <Form.Group className="mb-3" controlId="form">
@@ -195,9 +238,9 @@ function Cart() {
                             style={{ height: '200px' }}
                             />
                         </FloatingLabel>
-                        </Form.Group>
-                        <div className="d-grid text-center mt-5">
-                        <Button variant="danger" width="100%" onClick={handleBuy}>
+                        </Form.Group> */}
+                        <div className="d-grid text-center">
+                        <Button disabled={!orderId[0]} variant="danger" width="100%" onClick={handleBuy}>
                             Pay
                         </Button>
                         </div>
@@ -205,6 +248,8 @@ function Cart() {
                 </div>
             </div>
         </Container>
+        <DeleteData setConfirmDelete={setConfirmDelete} show={show} handleClose={handleClose} />
+        </>
     )
 }
 
