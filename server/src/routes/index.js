@@ -44,12 +44,12 @@ router.post('/order', auth, addOrder)
 router.delete('/order/:id', auth, deleteOrder)
 
 router.get('/favorites/:id', getFavorite)
-router.post('/favorite', auth, addShipping)
+router.post('/favorite', auth, addFavorite)
 router.delete('/favorite/:id',auth, deleteShipping)
 
 router.get('/shipping/:id', getShipping)
-router.post('/shipping', auth, addFavorite)
-router.delete('/shipping/:id',auth, deleteFavorite)
+router.post('/shipping', auth, addShipping)
+router.delete('/shipping/:id',auth, deleteShipping)
 
 router.get('/transactions/:id', getTransactions)
 router.post('/transaction', auth, addTransaction)

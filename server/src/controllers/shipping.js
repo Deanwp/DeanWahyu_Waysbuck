@@ -1,9 +1,9 @@
-const {shipping, user, beverage,} = require("../../models");
+const {shipping, user} = require("../../models");
 
 exports.getShipping = async (req, res) => {
   try {
     const { id } = req.params;
-    let shipping = await shipping.findAll({
+    const data = await shipping.findAll({
       where: {
         idUser: id
       },
@@ -23,9 +23,7 @@ exports.getShipping = async (req, res) => {
 
     res.send({
       status: "success",
-      data: {
-        shipping,
-      },
+      data
     });
   } catch (error) {
     console.log(error);
@@ -36,29 +34,34 @@ exports.getShipping = async (req, res) => {
   }
 };
 
-  exports.addShipping = async (req, res) => {
-    try {
-    let data = req.body;
-  
-    data = {
-      ...data,
-      idUser: req.user.id,
-    };
-    
-    await shipping.create(data);
+exports.addShipping = async (req, res) => {
+  try {
+    const { name,phone,postCode,address } = req.body
+    let newAddress = await shipping.create({
+      name,
+      phone,
+      postCode,
+      address,
+      idUser: req.user.id
+    })
 
-      res.send({
-        status: "success",
-        message: "Add finished",
-      });
-    } catch (error) {
-      console.log(error);
-      res.send({
-        status: "failed",
-        message: "Server Error",
-      });
-    }
-  };
+    newAddress = JSON.parse(JSON.stringify(newAddress))
+    
+    res.send({
+      status: 'success',
+      data: {
+        newAddress
+      }
+    })
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      status: "failed",
+      message: "Server Error",
+    });
+  }
+};
 
   exports.deleteShipping = async (req, res) => {
     try {
