@@ -48,7 +48,7 @@ exports.getOrder = async (req, res) => {
             ...item,
             beverage: {
                 ...item.beverage,
-                image: process.env.FILE_PATH + item.beverage.image,
+                image: process.env.PATH_FILE + item.beverage.image,
               },
         };
       });

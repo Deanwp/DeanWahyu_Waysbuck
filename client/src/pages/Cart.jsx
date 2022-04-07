@@ -14,16 +14,29 @@ function Cart() {
     const [confirmDelete, setConfirmDelete] = useState(null);
     const [totalPrice, setTotalPrice] = useState([])
     const [show, setShow] = useState(false);
+    const [shippings, setShippings] = useState([])
+    const [shippingId, setShippingId] = useState([])
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
     let { id } = useParams()
     let navigate = useNavigate();
     
+    console.log(orders);
+    console.log(shippings);
+
+
+    const getShippings = async () => {
+      try {
+        const response = await API.get("/shipping/"+ id);
+        setShippings(response.data.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     const getOrders = async () => {
         try {
           const response = await API.get("/orders/"+ id);
-          // Store order data to useState variabel
           setOrders(response.data.data);
         } catch (error) {
           console.log(error);
@@ -32,6 +45,7 @@ function Cart() {
       
       useEffect(() => {
         getOrders();
+        getShippings()
       }, []);
 
 
@@ -55,6 +69,9 @@ function Cart() {
         }
       }, [confirmDelete]);
 
+      const handleChangeShippingId = (e) => {
+        setShippingId(e.currentTarget.value)
+      };
 
       const handleChangeOrderId = (e) => {
         const id = e.target.id;
@@ -62,10 +79,8 @@ function Cart() {
         const price = e.target.value
 
         if (checked) {
-          // Save topping id if checked
           setTotalPrice([...totalPrice, parseInt(price)]);
         } else {
-          // Delete category id from variable if unchecked
           let newTotalPrice = totalPrice.filter((totalPriceItem) => {
             return totalPriceItem != price;
           });
@@ -73,30 +88,23 @@ function Cart() {
         }
 
         if (checked) {
-          // Save topping id if checked
           setOrderId([...orderId, parseInt(id)]);
         } else {
-          // Delete category id from variable if unchecked
           let newOrderId = orderId.filter((orderIdItem) => {
             return orderIdItem != id;
           });
           setOrderId(newOrderId);
         }
       };
+      
 
       const allPrice = totalPrice.reduce((a, b) => a + b, 0)
-      console.log(allPrice);
 
       useEffect(() => {
-        //change this to the script source you want to load, for example this is snap.js sandbox env
         const midtransScriptUrl = "https://app.sandbox.midtrans.com/snap/snap.js";
-        //change this according to your client-key
         const myMidtransClientKey = "SB-Mid-client-4j-2K1PGXPS8iHdF";
-      
         let scriptTag = document.createElement("script");
         scriptTag.src = midtransScriptUrl;
-        // optional if you want to set script attribute
-        // for example snap.js have data-client-key attribute
         scriptTag.setAttribute("data-client-key", myMidtransClientKey);
       
         document.body.appendChild(scriptTag);
@@ -109,44 +117,37 @@ function Cart() {
         try {
           e.preventDefault();
     
-          // Configuration
           const config = {
             headers: {
               "Content-type": "application/json",
             },
           };
     
-          // Get data from product
           const data = {
             orderId: orderId,
-            allPrice: allPrice
+            allPrice: allPrice,
+            idShipping: shippingId
           };
           
-          // Data body
           const body = JSON.stringify(data);
           console.log(data);
-          // Insert Order data
           const response = await API.post("/transaction", body, config);
         
           const token = response.data.payment.token;
           
           window.snap.pay(token, {
             onSuccess: function (result) {
-              /* You may add your own implementation here */
               console.log(result);
               navigate("/profile");
             },
             onPending: function (result) {
-              /* You may add your own implementation here */
               console.log(result);
               navigate("/profile");
             },
             onError: function (result) {
-              /* You may add your own implementation here */
               console.log(result);
             },
             onClose: function () {
-              /* You may add your own implementation here */
               alert("you closed the popup without finishing the payment");
             },
           });
@@ -196,7 +197,7 @@ function Cart() {
                     <Col>
                       <div className="text-center pt-5">
                         <img className="img-fluid" style={{ width: "40%" }} alt="empty" />
-                        <div className="mt-3">No data Topping</div>
+                        <div className="mt-3">No data Orders</div>
                       </div>
                     </Col>
                   )}
@@ -217,34 +218,44 @@ function Cart() {
                     </div>
                 </div>
                 <div className="col-4 text-danger">
-                <Form >
-                        {/* <Form.Group className="mb-3" controlId="form">
-                            <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="text" placeholder="Name"  />
-                        </Form.Group>
-                        <Form.Group className="mb-3" controlId="form">
-                            <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="number" placeholder="Phone" />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3" controlId="form">
-                            <Form.Control style={{backgroundColor:"whitesmoke"}} className="formInput" type="number" placeholder="Postcode"  />
-                        </Form.Group>
-
-                        <Form.Group className="mb-3 text-dark" controlId="form">
-                        <FloatingLabel controlId="floatingTextarea2" label="Address" style={{backgroundColor:"whitesmoke"}}>
-                            <Form.Control
-                            
-                            className="formInput"
-                            as="textarea"
-                            style={{ height: '200px' }}
-                            />
-                        </FloatingLabel>
-                        </Form.Group> */}
-                        <div className="d-grid text-center">
-                        <Button disabled={!orderId[0]} variant="danger" width="100%" onClick={handleBuy}>
-                            Pay
-                        </Button>
+                  <Form >
+                  {shippings.length !== 0 ? (
+                        <div className="d-grid">
+                          <h3 className="m-0 ">Delivery Details:</h3>
+                            {shippings.map((item, index, array) => (
+                              <div key={index} className="row card-body p-0 mb-3">
+                                <div className="col-2 p-0 mb-2 mt-2 d-flex justify-content-center align-items-center gap-3">
+                                    <Form.Check type="radio" checked={shippingId == item.id} id={item.id} key={item.id} value={item.id} onChange={handleChangeShippingId}/> 
+                                </div>
+                                <div className="col-10 p-0 mb-4 mt-2 d-grid align-items-center gap-2">
+                                    <h5 className="m-0 p-0">Name: {item.name}</h5>
+                                    <p className="m-0 p-0">Phone: {item.phone}</p>
+                                    <p className="m-0">postCode: {item.postCode}</p>
+                                    <p className="m-0">address: {item.address}</p>
+                                </div>
+                              </div>))}
                         </div>
-                    </Form>
+                    ) : (
+                    <Col>
+                      <div className="text-center pt-5 mb-5">
+                        <img className="img-fluid" style={{ width: "40%" }} alt="empty" />
+                        <div className="mt-3">Add Delivery Address First</div>
+                      </div>
+                    </Col>
+                  )}
+                  <div className="d-grid text-center">
+                    <Button variant="danger" width="100%">
+                      <Link to="/addAddress" className="text-decoration-none text-white">
+                        Add Address
+                      </Link>
+                    </Button>
+                 </div>
+                </Form>
+                    <div className="d-grid text-center mt-5">
+                      <Button disabled={!orderId[0] || !shippingId[0]} variant="danger" width="100%" onClick={handleBuy}>
+                          Pay
+                      </Button>
+                      </div>
                 </div>
             </div>
         </Container>

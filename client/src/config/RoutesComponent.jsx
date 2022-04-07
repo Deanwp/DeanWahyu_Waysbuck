@@ -1,5 +1,5 @@
 import React from 'react';
-import {AdminPage, Home, Profile, AddProduct, AddTopping, DetailProduct, Cart, Favorite} from '../pages'
+import {AdminPage, Home, Profile, AddProduct, AddTopping, DetailProduct, Cart, Favorite, AddAddress} from '../pages'
 import '../style/style.css'
 
 import { BrowserRouter as Router, Route, Routes} from "react-router-dom";
@@ -19,6 +19,7 @@ const RoutesComponenet = () => {
                 <Route exact path="/profile/:id" element={<Profile />} /> 
                 <Route exact path="/adminpage" element={<AdminPage />} />
                 <Route exact path="/favorite/:id" element={<Favorite />} />
+                <Route exact path="/addaddress" element={<AddAddress />} />
             </Routes>
         </>
     )

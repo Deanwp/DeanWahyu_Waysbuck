@@ -13,7 +13,7 @@ exports.getBeverages = async (req, res) => {
     data = data.map((item) => {
       return {
         ...item,
-        image: process.env.FILE_PATH + item.image
+        image: process.env.PATH_FILE + item.image
       }
     })
     res.send({
@@ -42,7 +42,7 @@ exports.addBeverage = async (req, res) => {
 
     newBeverage = {
       ...newBeverage,
-      image: process.env.FILE_PATH + newBeverage.image
+      image: process.env.PATH_FILE + newBeverage.image
     }
     
     res.send({
@@ -77,7 +77,7 @@ exports.getBeverage = async (req, res) => {
 
     data = {
       ...data,
-      image: process.env.FILE_PATH + data.image,
+      image: process.env.PATH_FILE + data.image,
     };
 
     res.send({
@@ -112,7 +112,7 @@ exports.updateBeverage = async (req, res) => {
    updateBeverage = {
     title : req.body.title,
     price : req.body.price,
-    image : process.env.FILE_PATH + updateBeverage.image
+    image : process.env.PATH_FILE + updateBeverage.image
    }
   
     res.send({

@@ -59,7 +59,7 @@ exports.getTransactions = async (req, res) => {
   
       data = data.map((item) => {
         item.orders.map( orders =>
-          orders.beverage.image = process.env.FILE_PATH + orders.beverage.image)
+          orders.beverage.image = process.env.PATH_FILE + orders.beverage.image)
         return { 
             ...item,
             orders: [

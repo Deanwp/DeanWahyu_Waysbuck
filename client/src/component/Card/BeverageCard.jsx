@@ -34,7 +34,7 @@ export default function ProductCard({ item, key, }) {
     }
 
   return (
-    <div className=" col-md-3 col-sm-12">
+    <div className=" col-md-3 col-sm-12 mb-sm-5 ">
       <Tooltip title="add favorite" style={{position:'absolute', zIndex:99, margin:0}}>
                         <IconButton
                             onClick={handleClick}

@@ -1,18 +1,31 @@
 import {Navbar, Container, Nav, NavDropdown} from 'react-bootstrap'
 import { MenuItem, Tooltip, IconButton, Menu } from '@mui/material';
 import { Link,useNavigate } from "react-router-dom";
-import {useContext} from 'react';
+import {useContext, useEffect} from 'react';
 import {UserContext} from '../../context/userContext'
 import { useState } from 'react';
-
-
+import imgBlank from "../../assets/blank-profile.png";
+import { API } from '../../config/api';
 
 export default function HeaderSignin () {
     let navigate = useNavigate()
     const [state, dispatch] = useContext(UserContext)
-    console.log(state);
+    const [profile, setProfile] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
     const open = Boolean(anchorEl);
+
+    const getProfile = async () => {
+        try {
+          const response = await API.get("/profile");
+          setProfile(response.data.data);
+        } catch (error) {
+          console.log(error);
+        }
+      };
+    useEffect(() => {
+        getProfile();
+      }, []);
+
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
@@ -38,14 +51,13 @@ export default function HeaderSignin () {
                             aria-controls={open ? 'account-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}>
-                            <img src="/Images/Profile.png" width="60" height="60" alt="Profile"/>
+                            <img className='avatar' src={profile?.image ? profile.image : imgBlank} width="60" height="60" alt="Profile"/>
                         </IconButton>
                     </Tooltip>
                     <Menu anchorEl={anchorEl} id="account-menu" open={open} onClose={handleClose} onClick={handleClose}>
                         <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/iprofile.png" width="20" height="20" alt="adminPage" /></i><Link to="/adminpage" className="text-decoration-none text-dark"> Admin Page</Link></MenuItem>
                         <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/ibeverage.png" width="20" height="20" alt="addBeverage" /></i><Link to="/addproduct" className="text-decoration-none text-dark"> Add Beverage</Link></MenuItem>
                         <MenuItem className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/itopping.png" width="20" height="20" alt="addTopping" /></i><Link to="/addtopping" className="text-decoration-none text-dark"> Add Topping</Link></MenuItem>
-                        
                         <MenuItem divider />
                         <MenuItem onClick={logout} className="gap-2 fs-6 fw-bold" eventKey='3'><i><img src="/Images/ilogout.png" width="20" height="20" alt="logout"/></i> Logout</MenuItem>
                     </Menu>
@@ -62,7 +74,7 @@ export default function HeaderSignin () {
                             aria-controls={open ? 'account-menu' : undefined}
                             aria-haspopup="true"
                             aria-expanded={open ? 'true' : undefined}>
-                            <img src="/Images/Profile.png" width="60" height="60" alt="Profile"/>
+                            <img className='avatar' src={profile?.image ? profile.image : imgBlank} width="60" height="60" alt="Profile"/>
                         </IconButton>
                     </Tooltip>
                     <Menu anchorEl={anchorEl} id="account-menu" open={open} onClose={handleClose} onClick={handleClose}>

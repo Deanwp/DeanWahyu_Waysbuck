@@ -25,7 +25,7 @@ function Home() {
 
     return(
         <Container>
-            <div>
+            <div className="d-none d-md-block">
                 <img src="/images/bg-main.png" alt="" width="100%" />
                 <div style={{marginLeft: '100px', position:'absolute', top: '15%'}}className="d-grid text-white col-md-6 col-sm-12 gap-4">
                     <h1 style={{fontSize: '60px'}} className="fw-bold text-white">WAYSBUCK</h1>
@@ -37,7 +37,7 @@ function Home() {
             <div className="row align-items-start p-0 mt-5 ">
             <h1 className="text-danger fw-bold mb-4">Lets Order</h1>    
                 {beverage.length !== 0 ? (
-                   <Row>
+                   <Row className="mb-3">
                        {beverage?.map((item, index) => (<ProductCard item={item} key={index}/>))}
                    </Row>
                    ) : (

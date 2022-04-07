@@ -4,7 +4,7 @@ import { UserContext } from "../context/userContext";
 import { API } from "../config/api";
 import imgBlank from "../assets/blank-profile.png";
 import dateFormat from "dateformat"
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import convertRupiah from "rupiah-format";
 
 
@@ -13,10 +13,8 @@ function Profile() {
     const [state] = useContext(UserContext);
     const [profile, setProfile] = useState({});
     const [transactions, setTransactions] = useState([]);
-    const timestamp = new Date(transactions.createdAt)
     let { id } = useParams()
 
-    console.log(timestamp);
 
     const getProfile = async () => {
         try {
@@ -45,7 +43,7 @@ function Profile() {
                 <div className="row col-md-6 col-sm-12 align-items-start p-0 ">
                 <h1 className="text-danger fw-bold mb-4">My Profile</h1>
                    <div className="col-md-4 col-sm-12">
-                    <img src="/Images/Profilepict.png" style={{ width: "90%" }} alt="" />
+                    <img src={profile?.image ? profile.image : imgBlank} style={{ width: "90%" }} alt="avatar" />
                    </div>
                    <div className="col-md-8 col-sm-12 sm-text-center p-0">
                     <h4>Full Name</h4>

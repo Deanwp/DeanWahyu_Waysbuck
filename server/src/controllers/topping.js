@@ -13,7 +13,7 @@ exports.getToppings = async (req, res) => {
     data = data.map((item) => {
       return {
         ...item,
-        image: process.env.FILE_PATH + item.image
+        image: process.env.PATH_FILE + item.image
       }
     })
     res.send({
@@ -31,19 +31,20 @@ exports.getToppings = async (req, res) => {
 
 exports.addTopping = async (req, res) => {
   try {
-    const { title,price } = req.body;
     
-    let newTopping = await topping.create({
-      title,
-      price,
+    const data = {
+      title: req.body.title,
+      price: req.body.price,
       image: req.file.filename,
-    })
+    }
+
+    let newTopping = await topping.create(data)
 
     newTopping = JSON.parse(JSON.stringify(newTopping))
 
     newTopping = {
       ...newTopping,
-      image: process.env.FILE_PATH + newTopping.image
+      image: process.env.PATH_FILE + newTopping.image
     }
     
     res.send({
@@ -109,7 +110,7 @@ exports.updateTopping = async (req, res) => {
    updateTopping = {
     title : req.body.title,
     price : req.body.price,
-    image : process.env.FILE_PATH + updateTopping.image
+    image : process.env.PATH_FILE + updateTopping.image
    }
   
     res.send({
